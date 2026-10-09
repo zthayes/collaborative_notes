@@ -291,3 +291,13 @@ Clients never use Socket.IO as an alternate write API.
 ## Scope
 
 The project intentionally focuses on the requested REST-service concerns: API correctness, persistence, authentication, authorization, concurrency, validation, testing, and clear documentation. The React client and Socket.IO layer demonstrate the API and real-time behavior without changing the REST service's source-of-truth model.
+
+
+## If I Had More Time
+
+- **Real-time sharing notifications:** Notify users when a note is newly shared with them so the note appears without requiring a refresh.
+- **Pagination and improved search:** Add pagination to the notes endpoint and expand search as the number of notes grows.
+- **Automated end-to-end testing:** Add tests covering the most important frontend workflows and real-time collaboration behavior in addition to the existing API integration tests.
+- **Production hardening:** Add stronger security configuration, structured logging, and more robust error monitoring.
+- **More scalable collaboration:** The current revision-based approach intentionally favors simplicity and predictable conflict handling. For more complex simultaneous editing, I would evaluate operational transformation (OT) or CRDT-based collaboration.
+- **Dark mode:** Add a user-selectable dark/light theme to improve accessibility and usability.
