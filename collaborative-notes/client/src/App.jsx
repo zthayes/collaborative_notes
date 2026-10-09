@@ -287,19 +287,26 @@ function NotesApp({ user, logout }) {
     });
 
     const handleUpdate = note => {
-      if (note.id === selectedId) {
-        // The broadcast payload is based on the user who saved the note.
-        // Preserve this client's access role so an editor does not appear
-        // to become the owner (or lose owner-only controls) when another
-        // user saves the shared note.
-        setDraft(current => current ? { ...note, role: current.role } : note);
-        setNotes(current =>
-          current.map(item =>
-            item.id === note.id ? { ...item, ...note, role: item.role } : item
-          )
-        );
-        setStatus("Updated by another user");
-      }
+      if (note.id !== selectedId) return;
+
+      setDraft(current => {
+        if (!current || note.revision <= current.revision) {
+          return current;
+        }
+
+        // The server broadcasts the canonical note without a recipient role.
+        // Preserve this client's access role because roles are user-specific.
+        return { ...note, role: current.role };
+      });
+
+      setNotes(current =>
+        current.map(item =>
+          item.id === note.id && note.revision > item.revision
+            ? { ...item, ...note, role: item.role }
+            : item
+        )
+      );
+      setStatus("Updated by another user");
     };
 
     socket.on("note:updated", handleUpdate);
@@ -343,8 +350,6 @@ function NotesApp({ user, logout }) {
       );
       setStatus("Saved");
 
-      socket.emit("note:join", draft.id, () => {});
-      socket.emit("note:updated", data.note);
     } catch (err) {
       if (err.status === 409) {
         setDraft(err.data.note);

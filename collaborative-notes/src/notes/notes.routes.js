@@ -78,6 +78,11 @@ router.patch("/:id", async (req, res, next) => {
       });
     }
 
+    const io = req.app.locals.io;
+    if (io) {
+      io.to(`note:${result.note.id}`).emit("note:updated", result.note);
+    }
+
     res.json({ note: result.note });
   } catch (error) {
     next(error);

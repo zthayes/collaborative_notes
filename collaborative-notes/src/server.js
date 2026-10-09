@@ -15,6 +15,7 @@ const io = new Server(server, {
 });
 
 configureSocket(io);
+app.locals.io = io;
 
 server.listen(port, () => {
   console.log(`API listening on http://localhost:${port}`);

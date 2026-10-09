@@ -43,7 +43,7 @@ router.post("/register", async (req, res, next) => {
 router.post("/login", async (req, res, next) => {
   try {
     const data = z.object({
-      email: z.string().email(),
+      email: z.string().trim().email().max(255),
       password: z.string().min(1)
     }).parse(req.body);
 

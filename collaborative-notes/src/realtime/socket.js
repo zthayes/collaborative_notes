@@ -27,27 +27,9 @@ export function configureSocket(io) {
         }
 
         await socket.join(`note:${noteId}`);
-
         callback?.({ ok: true, note });
       } catch {
         callback?.({ ok: false, error: "Unable to join note" });
-      }
-    });
-
-    socket.on("note:updated", async (note) => {
-      try {
-        const access = await getNoteAccess(note.id, socket.user.sub);
-
-        if (!access || !["owner", "editor"].includes(access.role)) {
-          return;
-        }
-
-        // Do not broadcast the sender's role. Each recipient must preserve
-        // the role that applies to their own account.
-        const { role: _role, ...noteUpdate } = note;
-        socket.to(`note:${note.id}`).emit("note:updated", noteUpdate);
-      } catch {
-        // Ignore malformed client events.
       }
     });
 

@@ -212,7 +212,14 @@ export async function listShares(noteId, userId) {
   }
 
   const result = await query(
-    `SELECT ns.user_id, ns.role, u.name, u.email
+    `SELECT
+       ns.user_id,
+       ns.role,
+       json_build_object(
+         'id', u.id,
+         'name', u.name,
+         'email', u.email
+       ) AS user
      FROM note_shares ns
      JOIN users u ON u.id = ns.user_id
      WHERE ns.note_id = $1
